@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>تسجيل الدخول</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('logo.png');
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        background-attachment: fixed;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #login-page {
+        background-color: rgba(255, 255, 255, 0.85);
+        padding: 2rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        width: 300px;
+        text-align: center;
+    }
+    #login-page input[type="text"], #login-page input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    #login-page button {
+        background-color: #5c67f2;
+        color: white;
+        border: none;
+        padding: 10px;
+        width: 100%;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    #login-page button:hover {
+        background-color: #4a54e1;
+    }
+    #app-page {
+        display: none;
+        flex-direction: column;
+        height: 100vh;
+        width: 100vw;
+        background-color: white;
+        box-sizing: border-box;
+        position: relative;
+        padding-top: 20px;
+        padding-bottom: 60px;
+        overflow-y: auto;
+    }
+    #top-bar {
+        width: 100%;
+        height: 60px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 22px;
+        color: #005fbb;
+        margin-bottom: 15px;
+        user-select: none;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: relative;
+    }
+    #profile-icon-top {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 16px;
+        color: #005fbb;
+    }
+    #profile-icon-top svg {
+        width: 24px;
+        height: 24px;
+        fill: #005fbb;
+    }
+    #blue-section {
+        background-color: #005fbb;
+        color: white;
+        height: 25vh;
+        width: 100%;
+        text-align: center;
+        padding: 20px 40px;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    }
+    #blue-section h1 {
+        margin: 0;
+        font-size: 3rem;
+        font-weight: 900;
+        text-shadow: 1px 1px 3px #003a70;
+    }
+    #blue-section p {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 400;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        text-shadow: 1px 1px 3px #003a70;
+    }
+    #blue-section #summary {
+        font-style: italic;
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 10px auto 0 auto;
+        color: #d4e9ff;
+        line-height: 1.5;
+    }
+    #content-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 20px 40px;
+        box-sizing: border-box;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+    #video-container {
+        flex: 1 1 40%;
+        min-width: 320px;
+        max-width: 600px;
+        background-color: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+    }
+    #video-container video {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        display: block;
+    }
+    #summary-right {
+        flex: 1 1 50%;
+        min-width: 300px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 1.15rem;
+        padding: 20px;
+        background-color: #fdfdfd;
+        border-radius: 10px;
+        box-shadow: 0 3px 7px rgba(0,0,0,0.1);
+        line-height: 1.75;
+        color: #222;
+        max-height: 380px;
+        overflow-y: auto;
+    }
+    #bottom-nav {
+        height: 60px;
+        background-color: #005fbb;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        color: white;
+        font-size: 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+        z-index: 1000;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .nav-item {
+        flex-grow: 1;
+        text-align: center;
+        cursor: pointer;
+        font-size: 13px;
+        user-select: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 0;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+    .nav-item svg {
+        width: 22px;
+        height: 22px;
+        margin-bottom: 4px;
+        fill: white;
+    }
+    .nav-item:hover {
+        background-color: #004a90;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0,0,0,0.6);
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .modal-content {
+        background-color: white;
+        border-radius: 12px;
+        padding: 25px;
+        width: 100%;
+        max-width: 900px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: relative;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .modal-header {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        font-weight: 700;
+        color: #005fbb;
+    }
+    .close-btn {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        font-size: 1.6rem;
+        cursor: pointer;
+        color: #888;
+        transition: color 0.2s ease;
+        user-select: none;
+    }
+    .close-btn:hover {
+        color: #222;
+    }
+    #courses-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+    }
+    .course-item {
+        width: 280px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .course-item:hover {
+        transform: scale(1.05);
+    }
+    .course-video {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+    .course-title {
+        padding: 10px 15px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #005fbb;
+    }
+</style>
+</head>
+<body>
+<div id="login-page">
+    <h2>تسجيل الدخول</h2>
+    <form id="login-form">
+        <input type="text" id="username" placeholder="اسم المستخدم" required />
+        <input type="password" id="password" placeholder="كلمة المرور" required />
+        <button type="submit">دخول</button>
+    </form>
+</div>
+
+<div id="app-page">
+    <div id="top-bar">
+        Code Scanner
+        <div id="profile-icon-top" title="الملف الشخصي" class="nav-trigger">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.2 4.8-4.8C16.8 4.7 14.7 2.5 12 2.5S7.2 4.7 7.2 7.2 9.3 12 12 12zm0 1.5c-3.2 0-9.6 1.6-9.6 4.8v2.5h19.2v-2.5c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            الملف الشخصي
+        </div>
+    </div>
+
+    <div id="blue-section">
+        <h1>Code Scanner</h1>
+        <p>أبليكيشن لفحص أكواد البرمجة وتعلم الأمن السيبراني</p>
+        <p id="summary">
+            هذا المشروع يهدف إلى تقديم أداة فعالة وسهلة الاستخدام تساعد المطورين والمهتمين بالأمن السيبراني على تحليل أكواد البرمجة، تعزيز المهارات التعليمية، وتوفير ملخص مبسط عن الأمن السيبراني وكيفية حماية الأنظمة من التهديدات الإلكترونية المتنوعة.
+        </p>
+    </div>
+
+    <div id="content-section">
+        <div id="video-container">
+            <video controls>
+                <source src="video.mp4" type="video/mp4" />
+                متصفحك لا يدعم عرض الفيديو.
+            </video>
+        </div>
+        <div id="summary-right">
+            <h2>ملخص عن المشروع</h2>
+            <p>هذا المشروع يجمع بين التقنية التعليمية والأمن السيبراني، حيث يوفر أدوات تساعد على فحص الأكواد البرمجية وتحليلها بطريقة سهلة وفعالة. من خلال هذا التطبيق، يستطيع المستخدمون تطوير مهاراتهم الأمنية والتقنية في بيئة تفاعلية متقدمة.</p>
+            <p>يهدف التطبيق إلى رفع مستوى الوعي الأمني وحماية الأنظمة الرقمية من خلال تعليم أفضل الممارسات وتقنيات الكشف المبكر عن الثغرات الأمنية.</p>
+        </div>
+    </div>
+
+    <div id="courses-page" style="display:none; padding: 10px 40px;">
+        <h2>Courses</h2>
+        <div id="courses-list">
+            <div class="course-item">
+                <video controls class="course-video" src="courses/course1.mp4"></video>
+                <div class="course-title">Introduction to Cybersecurity</div>
+            </div>
+            
+                        
+        </div>
+        <button onclick="closeCourses()" style="margin:20px auto; display:block; padding:10px 20px; font-size:16px; background:#005fbb; color:#fff; border:none; border-radius:6px; cursor:pointer;">Close Courses</button>
+    </div>
+
+    <div id="bottom-nav">
+        <div class="nav-item nav-trigger" id="search-icon" title="بحث">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 18c1.66 0 3.14-.68 4.22-1.78l4.3 4.3 1.42-1.42-4.3-4.3C17.32 13.14 18 11.66 18 10c0-4.41-3.59-8-8-8s-8 3.59-8 8 3.59 8 8 8zm0-14c3.31 0 6 2.69 6 6 0 3.31-2.69 6-6 6-3.31 0-6-2.69-6-6 0-3.31 2.69-6 6-6z"/></svg>
+            بحث
+        </div>
+        <div class="nav-item nav-trigger" id="chat-bottom-icon" title="شات">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+            شات وهمي
+        </div>
+        <div class="nav-item nav-trigger" id="test-bottom-icon" title="اختبار">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+            اختبار
+        </div>
+      
+        <div class="nav-item nav-trigger" id="courses-bottom-icon" title="كورسات">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="22px" height="22px">
+                <path d="M19,2H9C7.9,2,7,2.9,7,4v16.5c0,0.55,0.45,1,1,1h10c1.1,0,2-0.9,2-2V4C20,2.9,19.1,2,19,2z M19,18.5H10V4h9V18.5z"/>
+                <rect x="12" y="7" width="5" height="2"/>
+                <rect x="12" y="11" width="5" height="2"/>
+                <rect x="12" y="15" width="5" height="2"/>
+            </svg>
+            كورسات
+        </div>
+    </div>
+
+    <!-- نوافذ منبثقة -->
+    <div id="modal-profile" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-close="modal-profile">&times;</span>
+            <div class="modal-header">معلومات تسجيل الدخول</div>
+            <p><strong>اسم المستخدم:</strong> <span id="profile-username"></span></p>
+            <p><strong>وقت الدخول:</strong> <span id="login-time"></span></p>
+            <div id="test-reports">
+                <h3>الاختبارات المرسلة:</h3>
+                <ul id="test-results-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-about" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-close="modal-about">&times;</span>
+            <div class="modal-header">نبذة عن المشروع</div>
+            <p>Code Scanner هو تطبيق مصمم لفحص أكواد البرمجة وتعزيز الأمن السيبراني، عبر أدوات فحص وتحليل تعليمية وتفاعلية تقدم للمستخدمين تجربة تعلم وحماية متكاملة.</p>
+        </div>
+    </div>
+
+<div id="modal-test" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" data-close="modal-test">&times;</span>
+        <div class="modal-header">Cybersecurity Basics Test</div>
+        <form id="cybersecurity-test-form" novalidate>
+            <ol>
+                <li>
+                    What is phishing?
+                    <br/>
+                    <label><input type="radio" name="q1" value="Hacking computer networks" required> Hacking computer networks</label><br/>
+                    <label><input type="radio" name="q1" value="Tricking people to reveal personal information"> Tricking people to reveal personal information</label><br/>
+                    <label><input type="radio" name="q1" value="Sending viruses via email attachments"> Sending viruses via email attachments</label><br/>
+                    <label><input type="radio" name="q1" value="Physical theft of devices"> Physical theft of devices</label>
+                </li>
+                <li>
+                    What does a firewall do?
+                    <br/>
+                    <label><input type="radio" name="q2" value="Filters network traffic" required> Filters network traffic</label><br/>
+                    <label><input type="radio" name="q2" value="Encrypts data"> Encrypts data</label><br/>
+                    <label><input type="radio" name="q2" value="Detects viruses"> Detects viruses</label><br/>
+                    <label><input type="radio" name="q2" value="Scans emails"> Scans emails</label>
+                </li>
+                <li>
+                    Which is a strong password?
+                    <br/>
+                    <label><input type="radio" name="q3" value="password123" required> password123</label><br/>
+                    <label><input type="radio" name="q3" value="P@ssw0rd!" > P@ssw0rd!</label><br/>
+                    <label><input type="radio" name="q3" value="12345678" > 12345678</label><br/>
+                    <label><input type="radio" name="q3" value="abcdefg" > abcdefg</label>
+                </li>
+                <li>
+                    What is two-factor authentication?
+                    <br/>
+                    <label><input type="radio" name="q4" value="Using two passwords" required> Using two passwords</label><br/>
+                    <label><input type="radio" name="q4" value="Two layers of security"> Two layers of security</label><br/>
+                    <label><input type="radio" name="q4" value="Logging in twice"> Logging in twice</label><br/>
+                    <label><input type="radio" name="q4" value="Using two devices"> Using two devices</label>
+                </li>
+                <li>
+                    What is malware?
+                    <br/>
+                    <label><input type="radio" name="q5" value="A security software" required> A security software</label><br/>
+                    <label><input type="radio" name="q5" value="Malicious software"> Malicious software</label><br/>
+                    <label><input type="radio" name="q5" value="A firewall"> A firewall</label><br/>
+                    <label><input type="radio" name="q5" value="An antivirus"> An antivirus</label>
+                </li>
+                <li>
+                    What does HTTPS stand for?
+                    <br/>
+                    <label><input type="radio" name="q6" value="HyperText Transfer Protocol Secure" required> HyperText Transfer Protocol Secure</label><br/>
+                    <label><input type="radio" name="q6" value="High Transfer Protocol Security"> High Transfer Protocol Security</label><br/>
+                    <label><input type="radio" name="q6" value="Hyper Transfer Protocol Service"> Hyper Transfer Protocol Service</label><br/>
+                    <label><input type="radio" name="q6" value="HyperText Transfer Protocol Standard"> HyperText Transfer Protocol Standard</label>
+                </li>
+                <li>
+                    What is a VPN used for?
+                    <br/>
+                    <label><input type="radio" name="q7" value="Blocking viruses" required> Blocking viruses</label><br/>
+                    <label><input type="radio" name="q7" value="Encrypting internet connections"> Encrypting internet connections</label><br/>
+                    <label><input type="radio" name="q7" value="Speeding up internet"> Speeding up internet</label><br/>
+                    <label><input type="radio" name="q7" value="Managing passwords"> Managing passwords</label>
+                </li>
+                <li>
+                    What does social engineering mean?
+                    <br/>
+                    <label><input type="radio" name="q8" value="Building social media" required> Building social media</label><br/>
+                    <label><input type="radio" name="q8" value="Manipulating people to reveal secrets"> Manipulating people to reveal secrets</label><br/>
+                    <label><input type="radio" name="q8" value="Engineering social apps"> Engineering social apps</label><br/>
+                    <label><input type="radio" name="q8" value="Creating websites"> Creating websites</label>
+                </li>
+                <li>
+                    What is ransomware?
+                    <br/>
+                    <label><input type="radio" name="q9" value="A type of malware" required> A type of malware</label><br/>
+                    <label><input type="radio" name="q9" value="A security protocol"> A security protocol</label><br/>
+                    <label><input type="radio" name="q9" value="An antivirus"> An antivirus</label><br/>
+                    <label><input type="radio" name="q9" value="A firewall"> A firewall</label>
+                </li>
+                <li>
+                    How often should you update software?
+                    <br/>
+                    <label><input type="radio" name="q10" value="Rarely" required> Rarely</label><br/>
+                    <label><input type="radio" name="q10" value="Only when prompted"> Only when prompted</label><br/>
+                    <label><input type="radio" name="q10" value="Regularly to fix vulnerabilities"> Regularly to fix vulnerabilities</label><br/>
+                    <label><input type="radio" name="q10" value="Never"> Never</label>
+                </li>
+            </ol>
+            <button type="submit" class="submit-btn" style="background-color:#005fbb; color:white; font-size:18px; padding:10px 25px; border:none; border-radius:8px; cursor:pointer; margin-top:20px; width:100%;">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+    <div id="modal-chat" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-close="modal-chat">&times;</span>
+            <div class="modal-header">شات وهمي</div>
+            <p>هذا الشات وهمي للتجربة فقط ولا يتصل بالإنترنت.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const loginForm = document.getElementById('login-form');
+    const loginPage = document.getElementById('login-page');
+    const appPage = document.getElementById('app-page');
+
+    let username = "";
+    let loginTime = "";
+
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        username = document.getElementById('username').value;
+        loginTime = new Date().toLocaleString();
+
+        document.getElementById('profile-username').innerText = username;
+        document.getElementById('login-time').innerText = loginTime;
+
+        loginPage.style.display = 'none';
+        appPage.style.display = 'flex';
+        document.title = "Code Scanner";
+    });
+
+    const modalProfile = document.getElementById('modal-profile');
+    const modalAbout = document.getElementById('modal-about');
+    const modalTest = document.getElementById('modal-test');
+    const modalChat = document.getElementById('modal-chat');
+    const coursesPage = document.getElementById('courses-page');
+
+    const profileTopIcon = document.getElementById('profile-icon-top');
+    const navItems = document.querySelectorAll('.nav-item.nav-trigger');
+
+    profileTopIcon.addEventListener('click', () => {
+        hideAllModals();
+        modalProfile.style.display = "flex";
+    });
+
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            hideAllModals();
+            switch(item.id){
+                case 'about-bottom-icon':
+                    modalAbout.style.display = "flex";
+                    break;
+                case 'test-bottom-icon':
+                    modalTest.style.display = "flex";
+                    break;
+                case 'chat-bottom-icon':
+                    modalChat.style.display = "flex";
+                    break;
+                case 'courses-bottom-icon':
+                    showCoursesPage();
+                    break;
+                case 'search-icon':
+                    alert('You can download and install Burp Suite from https://portswigger.net/burp. Once installed, configure your browser proxy to use Burp Suite for vulnerability testing. Integration with this app requires advanced setup.');
+                    break;
+            }
+        });
+    });
+
+    function hideAllModals(){
+        modalProfile.style.display = "none";
+        modalAbout.style.display = "none";
+        modalTest.style.display = "none";
+        modalChat.style.display = "none";
+        closeCourses();
+    }
+
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modalId = btn.getAttribute('data-close');
+            document.getElementById(modalId).style.display = 'none';
+        });
+    });
+
+    function showCoursesPage(){
+        // إخفاء المحتويات الرئيسية
+        document.getElementById('content-section').style.display = 'none';
+        document.getElementById('blue-section').style.display = 'none';
+        coursesPage.style.display = 'block';
+    }
+
+    function closeCourses(){
+        document.getElementById('content-section').style.display = 'flex';
+        document.getElementById('blue-section').style.display = 'flex';
+        coursesPage.style.display = 'none';
+    }
+
+    // نموذج الاختبار: التعامل مع الإرسال وتخزين النتائج
+    const formTest = document.getElementById('cybersecurity-test-form');
+    if(formTest){
+        formTest.addEventListener('submit', function(e){
+            e.preventDefault();
+            const formData = new FormData(formTest);
+            let results = [];
+            for(let [key, value] of formData.entries()){
+                results.push(`${key}: ${value === "true" ? "true" : "false"}`);
+            }
+            const ul = document.getElementById('test-results-list');
+            if(ul) {
+                ul.innerHTML = '';
+                results.forEach(r=>{
+                    const li = document.createElement('li');
+                    li.textContent = r;
+                    ul.appendChild(li);
+                });
+            }
+            alert('Test submitted. Results appear in your profile.');
+            modalTest.style.display = "none";
+            modalProfile.style.display = "flex";
+        });
+    }
+</script>
+
+<!-- صفحة الكورسات (مخفية افتراضيا) -->
+<div id="courses-page" style="display:none; padding: 20px 40px; background:white; height: calc(100vh - 140px); overflow-y: auto; box-sizing: border-box;">
+    <h2>Courses</h2>
+    <div id="courses-list" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+        <!-- أمثلة الفيديوهات -->
+        <div style="width: 300px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; cursor: pointer;">
+            <video width="300" height="170" controls src="courses/course1.mp4"></video>
+            <div style="padding: 8px; font-weight: bold; color: #005fbb;">Introduction to Offensive Security</div>
+        </div>
+        <div style="width: 300px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; cursor: pointer;">
+            <video width="300" height="170" controls src="courses/course2.mp4"></video>
+            <div style="padding: 8px; font-weight: bold; color: #005fbb;">Cybersecurity Basics</div>
+        </div>
+        <div style="width: 300px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; cursor: pointer;">
+            <video width="300" height="170" controls src="courses/course3.mp4"></video>
+            <div style="padding: 8px; font-weight: bold; color: #005fbb;">Advanced Pentesting Techniques</div>
+        </div>
+    </div>
+    <button onclick="closeCourses()" style="margin: 20px auto; display: block; padding: 10px 25px; font-size: 16px; background:#005fbb; color:#fff; border:none; border-radius:8px; cursor:pointer;">Close Courses</button>
+</div>
+</body>
+</html>
