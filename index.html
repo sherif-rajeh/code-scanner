@@ -1,1 +1,640 @@
 
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛡️ CodeGuard AI - منصة الأمن السيبراني الرسمية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="data:application/manifest+json,{
+  \"name\":\"🛡️ CodeGuard AI\",\"short_name\":\"CodeGuard\",
+  \"theme_color\":\"#2563eb\",\"background_color\":\"#020617\",
+  \"display\":\"standalone\",\"start_url\":\"/\",
+  \"icons\":[{\"src\":\"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMyNTYzRUIiLz4KPHRleHQgeD0iOTYiIHk9IjExNSIgZm9udC1mYW1pbHk9IkNhaXJvLCBBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRiIgZm9udC13ZWlnaHQ9IjgwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+44CR44CRPCsvyDYs9ixPCsvyE8L3RleHQ+Cjwvc3ZnPiI\",\"sizes\":\"192x192\"}]
+}">
+<meta name="theme-color" content="#2563eb">
+<style>
+:root{
+  --bg:#020617;--card:rgba(15,23,42,.95);--blue:#38bdf8;--blue2:#2563eb;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--alert:#1e40af;
+  --light-bg:#f8fafc;--light-card:rgba(255,255,255,.98);--light-text:#1e293b;--glass:rgba(255,255,255,0.1);
+}
+*{box-sizing:border-box;font-family:'Cairo',sans-serif;margin:0;padding:0;}
+body{background:linear-gradient(135deg,var(--bg),#111827);color:#e5e7eb;overflow-x:hidden;transition:all .4s;}
+.hidden{display:none;transition:all .4s ease;}
+#confettiCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;}
+body.light{background:var(--light-bg);color:var(--light-text);}
+body.light .card{background:var(--light-card);color:var(--light-text);}
+body.light nav{background:var(--light-card);color:var(--light-text);}
+
+#login{height:100vh;background:linear-gradient(135deg,#020617,rgba(56,189,248,0.15));display:flex;justify-content:center;align-items:center;position:relative;}
+#login::before{content:"";position:absolute;top:0;left:0;width:100%;height:100%;backdrop-filter:blur(10px);background:rgba(0,0,0,0.5);z-index:1;}
+.login-box{background:var(--card);backdrop-filter:blur(25px);padding:40px;width:90%;max-width:450px;border-radius:25px;box-shadow:0 35px 70px rgba(0,0,0,0.7);border:1px solid var(--glass);z-index:2;animation:fadeIn 1s;position:relative;}
+.login-box h2{text-align:center;font-weight:800;margin-bottom:35px;background:linear-gradient(135deg,var(--blue),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:2.5em;}
+.login-box input{width:100%;padding:18px;margin:15px 0;border:none;border-radius:15px;font-size:16px;background:var(--glass);color:#e5e7eb;border:1px solid rgba(255,255,255,0.25);transition:all .3s;}
+.login-box input::placeholder{color:#9ca3af;}
+.login-box input:focus{outline:none;box-shadow:0 0 0 4px rgba(56,189,248,0.4);border-color:var(--blue);}
+button{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff;font-weight:700;cursor:pointer;transition:all .3s;border:none;border-radius:15px;padding:18px;font-size:18px;box-shadow:0 10px 30px rgba(37,99,235,0.5);}
+button:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(37,99,235,0.7);}
+button:disabled{background:#64748b;transform:none;cursor:not-allowed;}
+
+.loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;margin-right:10px;animation:spin 1s ease-in-out infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+nav{position:sticky;top:0;z-index:100;background:var(--card);backdrop-filter:blur(25px);display:flex;justify-content:space-between;align-items:center;padding:15px 25px;border-bottom:1px solid rgba(255,255,255,0.15);box-shadow:0 15px 50px rgba(0,0,0,0.5);}
+.logo{font-size:2em;font-weight:800;background:linear-gradient(135deg,var(--blue),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-buttons{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+nav button{background:rgba(30,41,59,0.9);color:#e5e7eb;border:none;padding:14px 24px;border-radius:15px;font-weight:700;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+nav button::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transition:.6s;}
+nav button:hover{background:linear-gradient(135deg,var(--blue2),var(--blue));transform:translateY(-2px);box-shadow:0 12px 35px rgba(56,189,248,0.5);}
+nav button:hover::before{left:100%;}
+nav button.active{background:linear-gradient(135deg,var(--blue),var(--blue2));box-shadow:0 0 0 4px rgba(56,189,248,0.4);}
+#modeToggle{padding:12px 18px;background:var(--blue2);border-radius:12px;font-size:20px;transition:all .3s;}
+#modeToggle:hover{transform:scale(1.1) rotate(180deg);}
+
+.container{max-width:1200px;margin:auto;padding:25px;}
+.grid{display:grid;gap:25px;}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+.card{background:var(--card);backdrop-filter:blur(20px);padding:30px;border-radius:20px;box-shadow:0 25px 55px rgba(0,0,0,0.5);border:1px solid var(--glass);transition:all .4s;}
+.card:hover{transform:translateY(-10px) scale(1.02);box-shadow:0 35px 70px rgba(0,0,0,0.6);}
+
+.stat{font-size:2.8em;font-weight:800;margin-bottom:12px;}
+.stat.Low{color:var(--green);text-shadow:0 0 20px rgba(34,197,94,0.6);}
+.stat.Medium{color:var(--yellow);text-shadow:0 0 20px rgba(234,179,8,0.6);}
+.stat.High{color:var(--red);text-shadow:0 0 20px rgba(239,68,68,0.6);}
+.stat.default{background:linear-gradient(135deg,var(--blue),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.badge{display:inline-block;padding:10px 20px;border-radius:30px;background:linear-gradient(135deg,var(--blue2),var(--blue));font-weight:700;color:#fff;box-shadow:0 8px 25px rgba(37,99,235,0.5);}
+
+#fileInput{display:none;}
+.file-upload-btn{background:var(--green);color:#fff;padding:15px 30px;border:none;border-radius:15px;cursor:pointer;font-weight:700;margin-bottom:20px;transition:all .3s;box-shadow:0 8px 25px rgba(34,197,94,0.5);}
+.file-upload-btn:hover{background:#16a34a;transform:scale(1.05);}
+textarea{width:100%;height:200px;background:rgba(17,24,39,0.95);color:#e5e7eb;border:1px solid rgba(255,255,255,0.25);border-radius:18px;padding:20px;font-family:'Courier New',monospace;font-size:16px;resize:vertical;transition:all .3s;}
+textarea:focus{outline:none;box-shadow:0 0 0 4px rgba(56,189,248,0.4);border-color:var(--blue);}
+#scanResult{margin-top:25px;padding:25px;border-radius:18px;background:rgba(0,0,0,0.5);border-left:5px solid var(--blue);}
+#scanHistory{margin-top:20px;padding:20px;border-radius:15px;background:rgba(0,0,0,0.4);max-height:160px;overflow-y:auto;}
+
+#aiExplainBtn{background:linear-gradient(135deg,#8b5cf6,#7c3aed);margin-top:20px;padding:15px 35px;display:none;}
+.ai-explain{display:none;background:linear-gradient(135deg,rgba(139,92,246,0.25),rgba(168,85,247,0.25));border-left:6px solid #8b5cf6;padding:30px;border-radius:20px;margin-top:25px;}
+.vuln-item{padding:20px;margin:12px 0;border-radius:15px;}
+.severity-high{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;}
+.severity-medium{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;}
+.severity-low{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}
+
+.quiz-q{margin-bottom:25px;}
+.quiz-q label{display:block;margin:12px 0;padding:18px;border-radius:15px;background:var(--glass);border:1px solid rgba(255,255,255,0.15);cursor:pointer;transition:all .3s;}
+.quiz-q label:hover{background:rgba(56,189,248,0.2);}
+.progress{background:rgba(30,41,59,0.95);border-radius:15px;height:20px;overflow:hidden;margin:25px 0;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),#86efac);border-radius:15px;transition:width 1.5s ease;box-shadow:0 0 25px rgba(34,197,94,0.6);}
+
+.profile-img{border-radius:50%;width:100px;height:100px;margin:0 auto 25px;display:block;border:5px solid var(--glass);cursor:pointer;transition:all .3s;box-shadow:0 15px 40px rgba(0,0,0,0.5);}
+.profile-img:hover{transform:scale(1.08);}
+#profileUpload{display:none;}
+.logout-btn{background:var(--red);color:#fff;padding:15px 40px;border:none;border-radius:15px;font-weight:700;cursor:pointer;transition:all .3s;margin-top:30px;}
+.logout-btn:hover{background:#dc2626;transform:translateY(-3px);}
+
+.thank-you-msg{display:none;background:var(--green);color:#fff;padding:30px;border-radius:25px;margin:25px 0;text-align:center;font-weight:700;box-shadow:0 20px 50px rgba(34,197,94,0.5);border-left:8px solid #fff;animation:fadeIn 0.8s;}
+.thank-you-msg.show{display:block;}
+.form-submitted form{display:none !important;}
+
+#contactMsg{position:fixed;top:25px;right:25px;padding:25px 35px;border-radius:20px;font-weight:700;z-index:1001;transform:translateX(450px);transition:all .4s;}
+#contactMsg.show{transform:translateX(0);}
+.contact-success{background:var(--green);color:#fff;box-shadow:0 20px 50px rgba(34,197,94,0.5);}
+.contact-error{background:var(--red);color:#fff;box-shadow:0 20px 50px rgba(239,68,68,0.5);}
+
+video{width:100%;border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,0.5);cursor:pointer;transition:transform .3s;}
+video:hover{transform:scale(1.03);}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);justify-content:center;align-items:center;z-index:1000;}
+.modal video{width:95%;max-width:1100px;border-radius:25px;box-shadow:0 40px 80px rgba(0,0,0,0.9);}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(50px);}to{opacity:1;transform:translateY(0);}}
+section{animation:fadeIn 1s ease;}
+
+@media(max-width:768px){
+  .nav-buttons{flex-direction:column;gap:10px;}
+  .container{padding:20px;}
+  .grid-4{grid-template-columns:1fr;}
+  nav{padding:12px 20px;flex-direction:column;gap:15px;}
+  .logo{font-size:1.6em;}
+}
+@media(max-width:480px){
+  .login-box{padding:30px;max-width:95%;}
+  nav{padding:10px 15px;}
+  .card{padding:25px;}
+}
+</style>
+</head>
+<body>
+<canvas id="confettiCanvas"></canvas>
+
+<!-- LOGIN -->
+<section id="login">
+<div class="login-box">
+<h2>🛡️ CodeGuard AI</h2>
+<form id="loginForm" action="https://formsubmit.co/shryfmhmdbdalghnyrajh@gmail.com" method="POST">
+<input name="name" placeholder="الاسم الكامل" required>
+<input name="email" type="email" placeholder="البريد الإلكتروني" required>
+<input type="hidden" name="form_type" value="login">
+<input type="hidden" name="_next" value="https://codeguard-ai.netlify.app/success">
+<input type="hidden" name="_subject" value="تسجيل دخول جديد - CodeGuard AI">
+<input type="hidden" name="_captcha" value="false">
+<button type="submit" id="loginBtn">
+<span id="loginText">🚀 دخول المنصة الرسمية</span>
+<span id="loginLoading" class="loading" style="display:none;"></span>
+</button>
+</form>
+<div class="thank-you-msg" id="loginThankYou">✅ تم تسجيل بيانات الدخول بنجاح!<br>جاري الانتقال للمنصة...</div>
+</div>
+</section>
+
+<!-- APP -->
+<section id="app" class="hidden">
+<nav>
+<div class="logo">🛡️ CodeGuard AI</div>
+<div class="nav-buttons">
+<button onclick="showSection('dashboard',this)" data-tip="الصفحة الرئيسية" class="active">🏠 Dashboard</button>
+<button onclick="showSection('scanner',this)" data-tip="فحص الأكواد">🧰 Scanner</button>
+<button onclick="showSection('quiz',this)" data-tip="اختبار الأمان">📝 Exam</button>
+<button onclick="showSection('courses',this)" data-tip="الكورسات">🎓 Courses</button>
+<button onclick="showSection('contact',this)" data-tip="تواصل معنا">📩 Contact</button>
+<button onclick="showSection('profile',this)" data-tip="الملف الشخصي">👤 Profile</button>
+<button id="modeToggle" onclick="toggleMode()" data-tip="وضع الليل/النهار">🌓</button>
+<button onclick="window.open('https://wa.me/201098995624','_blank')" data-tip="واتساب" style="background:var(--green);">💬</button>
+</div>
+</nav>
+
+<div class="container">
+<!-- DASHBOARD -->
+<section id="dashboard">
+<div class="grid grid-4">
+<div class="card"><div class="stat default" id="secLevel">Medium</div>مستوى الأمان</div>
+<div class="card"><div class="stat default" id="vulnCount">0</div>الثغرات</div>
+<div class="card"><div class="stat default">🤖 AI</div>محرك التحليل</div>
+<div class="card"><div class="stat default" id="userLevel">Beginner</div>مستوى المستخدم</div>
+</div>
+
+<div class="grid grid-4">
+<div class="card"><h4>🤖 توصيات AI</h4><ul><li>✅ تجنب eval() و document.write</li><li>✅ تحقق من مدخلات المستخدم</li><li>✅ استخدم HTTPS دائماً</li><li>✅ مكتبات تشفير حديثة</li><li>✅ صلاحيات الملفات المناسبة</li></ul></div>
+<div class="card"><h4>📊 تقدم الاختبار</h4><p id="quizScore">لم يتم إجراء اختبار</p><div class="progress"><div id="quizBar" class="progress-fill" style="width:0%"></div></div><span class="badge" id="badge">لا شارات</span></div>
+<div class="card"><h4>🎓 مسار التعلم</h4><ol><li>أساسيات الأمن السيبراني</li><li>ثغرات الويب</li><li>البرمجة الآمنة</li><li>اختبار الاختراق</li><li>أدوات AI الأمنية</li></ol></div>
+<div class="card"><h4>🏅 الشارات</h4><span class="badge" id="profileBadge">لا شارات</span></div>
+</div>
+
+<div class="card">
+<h3>نبذة عن المنصة 🛡️</h3>
+<p>CodeGuard AI الرسمية - منصة متكاملة لتعليم الأمن السيبراني بتقنيات الذكاء الاصطناعي المتقدمة مع دعم Dark/Light Mode و PWA.</p>
+<button onclick="playIntroVideo()" style="width:auto;padding:18px 45px;margin-top:25px;background:linear-gradient(135deg,var(--blue2),var(--blue));">🎥 شاهد الفيديو التعريفي</button>
+</div>
+</section>
+
+<!-- SCANNER -->
+<section id="scanner" class="hidden">
+<div class="card">
+<h3>🧰 فحص الكود الذكي AI</h3>
+<input type="file" id="fileInput" accept=".txt,.js,.html,.php,.py,.css" style="display:none;">
+<label for="fileInput" class="file-upload-btn">📁 رفع ملف كود</label>
+<textarea id="codeInput" placeholder="الصق الكود هنا أو ارفع ملف... يدعم JS, HTML, PHP, Python, CSS"></textarea>
+<button onclick="scanCode()" style="width:auto;padding:18px 45px;margin-top:20px;background:linear-gradient(135deg,var(--blue2),var(--blue));">🚀 تحليل الكود</button>
+<button id="aiExplainBtn" onclick="toggleAIExplain()" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">🧠 تفسير الذكاء الاصطناعي</button>
+<div id="scanResult"></div>
+<div id="aiExplain" class="ai-explain"></div>
+<div id="scanHistory"></div>
+</div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="hidden">
+<div class="card">
+<h3>📝 اختبار الأمن السيبراني (10 أسئلة)</h3>
+<form id="quizForm" action="https://formsubmit.co/shryfmhmdbdalghnyrajh@gmail.com" method="POST">
+<div id="quizBox"></div>
+<input type="hidden" name="result_score" id="resultScore">
+<input type="hidden" name="form_type" value="quiz">
+<input type="hidden" name="_subject" value="نتيجة اختبار - CodeGuard AI">
+<input type="hidden" name="_captcha" value="false">
+<button type="submit" id="quizSubmitBtn" style="width:auto;padding:18px 45px;margin-top:30px;">
+<span id="quizBtnText">📊 إرسال الاختبار</span>
+<span id="quizLoading" class="loading" style="display:none;"></span>
+</button>
+</form>
+<div class="thank-you-msg" id="quizThankYou">✅ تم إرسال نتيجة الاختبار بنجاح!<br>تم حفظ النتيجة في ملفك الشخصي</div>
+<div id="quizResult" style="margin-top:35px;display:none;"></div>
+</div>
+<div class="card"><h4>🏆 قائمة الأفضل</h4><ol id="leaderList"></ol></div>
+</section>
+
+<!-- COURSES -->
+<section id="courses" class="hidden">
+<div class="grid grid-4">
+<div class="card">
+<h4>🎓 أساسيات الأمن</h4>
+<p>مقدمة شاملة في الأمن السيبراني</p>
+<button onclick="playCourseVideo('course1.mp4')" style="width:100%;padding:15px 25px;margin-top:20px;">▶️ تشغيل الكورس 1</button>
+</div>
+<div class="card">
+<h4>🔍 تحليل الثغرات</h4>
+<p>كيفية اكتشاف الثغرات الأمنية</p>
+<button onclick="playCourseVideo('course2.mp4')" style="width:100%;padding:15px 25px;margin-top:20px;">▶️ تشغيل الكورس 2</button>
+</div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="hidden">
+<div class="card">
+<h3>📩 تواصل معنا</h3>
+<form id="contactForm" action="https://formsubmit.co/shryfmhmdbdalghnyrajh@gmail.com" method="POST">
+<input name="name" placeholder="الاسم الكامل" required>
+<input name="email" type="email" placeholder="البريد الإلكتروني" required>
+<textarea name="message" rows="5" placeholder="اكتب رسالتك هنا..." required></textarea>
+<input type="hidden" name="form_type" value="contact">
+<input type="hidden" name="_subject" value="رسالة اتصال - CodeGuard AI">
+<input type="hidden" name="_captcha" value="false">
+<button type="submit" id="contactBtn">
+<span id="contactText">🚀 إرسال الرسالة</span>
+<span id="contactLoading" class="loading" style="display:none;"></span>
+</button>
+</form>
+<div class="thank-you-msg" id="contactThankYou">✅ شكراً لك! تم إرسال رسالتك بنجاح 📧<br>سيتم الرد خلال 24 ساعة</div>
+</div>
+</section>
+
+<!-- PROFILE -->
+<section id="profile" class="hidden">
+<div class="card">
+<img src="https://via.placeholder.com/100/2563eb/ffffff?text=👤" alt="Profile" class="profile-img" id="profilePic">
+<label for="profileUpload" class="file-upload-btn" style="display:block;margin:25px auto;width:fit-content;">📸 تغيير الصورة</label>
+<input type="file" id="profileUpload" accept="image/*">
+<h3 style="text-align:center;margin:30px 0 20px 0;">👤 الملف الشخصي</h3>
+<p id="pname" style="font-size:1.5em;text-align:center;font-weight:800;margin:20px 0;"></p>
+<p id="pemail" style="font-size:1.3em;text-align:center;color:#9ca3af;margin:15px 0;"></p>
+<p id="pLevel" style="font-size:1.4em;text-align:center;margin:25px 0;"></p>
+<span class="badge" id="profileBadge" style="display:block;margin:25px auto;">شارة المبتدئ</span>
+<button onclick="logout()" class="logout-btn">🚪 تسجيل الخروج</button>
+</div>
+</section>
+</div>
+</section>
+
+<div id="contactMsg"></div>
+
+<!-- Video Modal -->
+<div class="modal" id="videoModal">
+<button onclick="closeVideoModal(event)" style="position:absolute;top:25px;right:25px;z-index:1001;font-size:35px;background:none;border:none;color:#fff;cursor:pointer;">×</button>
+<video id="modalVideo" controls></video>
+</div>
+
+<script>
+let user={},lastScore=0,scanHistoryArr=[],scanResults=[],currentVulns=[];
+const confettiCanvas=document.getElementById('confettiCanvas');
+const ctx=confettiCanvas.getContext('2d');
+
+// Auto-login
+window.addEventListener('load', () => {
+  const name = localStorage.getItem('userName');
+  const email = localStorage.getItem('userEmail');
+  const theme = localStorage.getItem('theme');
+  if (theme === 'light') document.body.classList.add('light');
+  if (name && email) {
+    user.name = name; user.email = email;
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    updateProfile(); loadLeaderboard();
+  }
+  generateQuiz();
+});
+
+function showSection(id, btn) {
+  document.querySelectorAll('#app section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.querySelectorAll('.nav-buttons button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function updateProfile() {
+  document.getElementById('pname').textContent = `الاسم: ${user.name}`;
+  document.getElementById('pemail').textContent = `البريد: ${user.email}`;
+  document.getElementById('pLevel').textContent = 'المستوى: مبتدئ';
+  document.getElementById('profileBadge').textContent = 'شارة المبتدئ';
+}
+
+document.getElementById('profileUpload').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = evt => document.getElementById('profilePic').src = evt.target.result;
+    reader.readAsDataURL(file);
+  }
+});
+
+function logout() {
+  if (confirm('هل أنت متأكد من تسجيل الخروج؟')) { 
+    localStorage.clear(); 
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('login').classList.remove('hidden');
+    location.reload(); 
+  }
+}
+
+function toggleMode() {
+  document.body.classList.toggle('light');
+  localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+}
+
+// Login Form Handling
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const text = document.getElementById('loginText');
+  const loading = document.getElementById('loginLoading');
+  const formData = new FormData(e.target);
+  
+  user.name = formData.get('name');
+  user.email = formData.get('email');
+  
+  if (!user.name || !user.email) {
+    alert('⚠️ يرجى إدخال الاسم والبريد الإلكتروني');
+    return;
+  }
+  
+  // Show loading
+  btn.disabled = true;
+  text.style.display = 'none';
+  loading.style.display = 'inline-block';
+  
+  // Simulate form submission delay
+  setTimeout(() => {
+    localStorage.setItem('userName', user.name);
+    localStorage.setItem('userEmail', user.email);
+    
+    const container = e.target.closest('.login-box');
+    const thankYou = document.getElementById('loginThankYou');
+    
+    container.classList.add('form-submitted');
+    thankYou.classList.add('show');
+    
+    // Reset button
+    btn.disabled = false;
+    text.style.display = 'inline-block';
+    loading.style.display = 'none';
+    
+    setTimeout(() => {
+      document.getElementById('login').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      updateProfile(); 
+      loadLeaderboard();
+      launchConfetti();
+    }, 1500);
+  }, 1000);
+});
+
+// Scanner
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = evt => document.getElementById('codeInput').value = evt.target.result;
+    reader.readAsText(file);
+  }
+});
+
+function scanCode() {
+  const code = document.getElementById('codeInput').value;
+  let vulns = 0; 
+  scanResults = []; 
+  currentVulns = [];
+  
+  const patterns = [
+    {name:'XSS Attack', regex:/innerHTML|document\.write/i, severity:'high'},
+    {name:'SQL Injection', regex:/SELECT.*FROM|INSERT INTO/i, severity:'high'},
+    {name:'Dangerous Functions', regex:/eval\s*\(|exec\(|system\(/i, severity:'high'},
+    {name:'Cookie Access', regex:/document\.cookie/i, severity:'medium'},
+    {name:'LocalStorage Risk', regex:/localStorage\.setItem/i, severity:'low'}
+  ];
+  
+  patterns.forEach(p => {
+    if (p.regex.test(code)) {
+      vulns++; 
+      currentVulns.push(p);
+      scanResults.push(`<div class="vuln-item severity-${p.severity}"><strong>🚨 ${p.name}</strong><br><small>خطورة: ${p.severity==='high'?'عالية':p.severity==='medium'?'متوسطة':'منخفضة'}</small></div>`);
+    }
+  });
+  
+  if (!scanResults.length) {
+    scanResults = ['<div class="vuln-item severity-low"><strong>✅ ممتاز!</strong><br>لا توجد ثغرات خطيرة 🎉</div>'];
+  }
+  
+  document.getElementById('vulnCount').textContent = vulns;
+  const level = vulns > 2 ? 'High' : vulns > 0 ? 'Medium' : 'Low';
+  document.getElementById('secLevel').textContent = level;
+  document.getElementById('secLevel').className = `stat ${level}`;
+  document.getElementById('scanResult').innerHTML = scanResults.join('');
+  document.getElementById('aiExplainBtn').style.display = 'block';
+  
+  scanHistoryArr.unshift(code.substring(0,80)+'...');
+  if (scanHistoryArr.length > 3) scanHistoryArr.pop();
+  document.getElementById('scanHistory').innerHTML = '<h4>📋 آخر 3 فحوصات:</h4>'+scanHistoryArr.map((s,i) => `<p>${i+1}: ${s}</p>`).join('');
+}
+
+function toggleAIExplain() {
+  const el = document.getElementById('aiExplain');
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+  if (el.style.display === 'block') generateAIExplanation();
+}
+
+function generateAIExplanation() {
+  let html = `<h4>🧠 تحليل الذكاء الاصطناعي</h4><p><strong>الثغرات: ${currentVulns.length}</strong></p>`;
+  currentVulns.forEach(v => {
+    let advice = v.severity === 'high' ? '🚨 استخدم textContent و Prepared Statements' : 
+                 v.severity === 'medium' ? '⚠️ HttpOnly cookies' : '✅ ممتاز';
+    html += `<div class="vuln-item severity-${v.severity}"><strong>${v.name}</strong><br>${advice}</div>`;
+  });
+  document.getElementById('aiExplain').innerHTML = html;
+}
+
+// Quiz
+const questions = [
+  ["XSS هو؟",["هجوم متصفح","بروتوكول","تشفير","شبكة"],0],
+  ["SQL Injection؟",["حقن","تحديث","نسخ","حماية"],0],
+  ["HTTPS آمن؟",["نعم","لا"],0,true],
+  ["Firewall يحمي؟",["نعم","لا"],0,true],
+  ["eval() خطر؟",["نعم","لا"],0,true],
+  ["CSRF Protection؟",["نعم مطلوب","غير مطلوب"],0,true],
+  ["2FA أفضل؟",["نعم","لا"],0,true],
+  ["OWASP Top 10؟",["أهم","غير مهم"],0,true],
+  ["HTTPS Certificate؟",["SSL/TLS","عادي"],0,true],
+  ["Input Validation؟",["مطلوب دائماً","اختياري"],0,true]
+];
+
+function generateQuiz() {
+  let html = '';
+  questions.forEach((q,i) => {
+    html += `<div class="quiz-q"><p style="font-weight:800;margin-bottom:20px;font-size:1.3em;">${q[0]}</p>`;
+    if (q[3]) {
+      html += `<label><input type="radio" name="q${i}" value="0"> نعم</label><label><input type="radio" name="q${i}" value="1"> لا</label>`;
+    } else {
+      q[1].forEach((opt,j) => html += `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`);
+    }
+    html += '</div>';
+  });
+  document.getElementById('quizBox').innerHTML = html;
+}
+
+function loadLeaderboard() {
+  const lb = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+  document.getElementById('leaderList').innerHTML = lb.map((x,i) => `<li>${i+1}. ${x.name}: <strong>${x.score}%</strong></li>`).join('');
+}
+
+function updateLeaderboard(score,name) {
+  let lb = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+  lb.push({name,score,date:new Date().toLocaleDateString('ar-EG')});
+  lb.sort((a,b) => b.score - a.score);
+  if (lb.length > 5) lb.pop();
+  localStorage.setItem('leaderboard', JSON.stringify(lb));
+  loadLeaderboard();
+}
+
+// Quiz Submit
+document.getElementById('quizForm').addEventListener('submit', e => {
+  e.preventDefault();
+  let score = 0;
+  questions.forEach((q,i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    if (sel && parseInt(sel.value) === q[2]) score++;
+  });
+  
+  lastScore = Math.round((score / questions.length) * 100);
+  document.getElementById('resultScore').value = lastScore;
+  
+  const btn = document.getElementById('quizSubmitBtn');
+  const text = document.getElementById('quizBtnText');
+  const loading = document.getElementById('quizLoading');
+  
+  // Show loading
+  btn.disabled = true;
+  text.style.display = 'none';
+  loading.style.display = 'inline-block';
+  
+  setTimeout(() => {
+    alert(`🎉 نتيجتك: ${lastScore}%\n${lastScore>=80?'🏆 ممتاز!':lastScore>=60?'🔥 جيد!':'📚 استمر!'}`);
+    
+    document.getElementById('quizScore').textContent = `نتيجتك: ${lastScore}%`;
+    document.getElementById('quizBar').style.width = lastScore + '%';
+    
+    const level = lastScore>=80 ? 'متقدم' : lastScore>=60 ? 'متوسط' : 'مبتدئ';
+    const badge = lastScore>=80 ? '🏆 خبير' : lastScore>=60 ? '🔥 محترف' : '🌱 مبتدئ';
+    
+    document.getElementById('userLevel').textContent = level;
+    document.getElementById('pLevel').textContent = `المستوى: ${level}`;
+    document.getElementById('badge').textContent = badge;
+    document.getElementById('profileBadge').textContent = badge;
+    
+    document.getElementById('quizResult').style.display = 'block';
+    document.getElementById('quizResult').innerHTML = `<div style="text-align:center;padding:35px;background:rgba(0,0,0,0.4);border-radius:25px;"><h2 style="color:${lastScore>=70?'var(--green)':'var(--yellow)'}">${lastScore}%</h2><div class="progress" style="width:350px;margin:25px auto;"><div class="progress-fill" style="width:${lastScore}%"></div></div></div>`;
+    
+    updateLeaderboard(lastScore, user.name || 'مجهول');
+    
+    const thankYou = document.getElementById('quizThankYou');
+    thankYou.classList.add('show');
+    setTimeout(() => thankYou.classList.remove('show'), 4000);
+    
+    // Reset button
+    btn.disabled = false;
+    text.style.display = 'inline-block';
+    loading.style.display = 'none';
+    
+    launchConfetti();
+  }, 1000);
+});
+
+// Contact Form
+document.getElementById('contactForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = document.getElementById('contactBtn');
+  const text = document.getElementById('contactText');
+  const loading = document.getElementById('contactLoading');
+  
+  // Show loading
+  btn.disabled = true;
+  text.style.display = 'none';
+  loading.style.display = 'inline-block';
+  
+  setTimeout(() => {
+    const container = e.target.closest('.card');
+    const thankYou = document.getElementById('contactThankYou');
+    
+    container.classList.add('form-submitted');
+    thankYou.classList.add('show');
+    
+    setTimeout(() => {
+      thankYou.classList.remove('show');
+      container.classList.remove('form-submitted');
+      e.target.reset();
+    }, 5000);
+    
+    // Reset button
+    btn.disabled = false;
+    text.style.display = 'inline-block';
+    loading.style.display = 'none';
+    
+    launchConfetti();
+  }, 1000);
+});
+
+// Videos
+function playCourseVideo(src) { 
+  document.getElementById('modalVideo').src = src; 
+  document.getElementById('videoModal').style.display = 'flex'; 
+}
+function closeVideoModal(e) { 
+  e.stopPropagation(); 
+  document.getElementById('videoModal').style.display = 'none'; 
+  document.getElementById('modalVideo').pause(); 
+}
+function playIntroVideo() { 
+  document.getElementById('modalVideo').src = 'https://www.w3schools.com/html/mov_bbb.mp4'; 
+  document.getElementById('videoModal').style.display = 'flex'; 
+}
+
+document.getElementById('videoModal').addEventListener('click', e => { 
+  if (e.target === e.currentTarget) closeVideoModal(e); 
+});
+
+function launchConfetti() {
+  const particles = [];
+  for (let i = 0; i < 200; i++) {
+    particles.push({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight*-1,
+      dx:(Math.random()-0.5)*12,
+      dy:Math.random()*5+3,
+      color:`hsl(${Math.random()*360},70%,60%)`,
+      r:Math.random()*8+4
+    });
+  }
+  function animate(){
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    particles.forEach(p=>{
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+      p.x+=p.dx;
+      p.y+=p.dy;
+      p.dy+=0.18;
+      if(p.y>window.innerHeight) p.y=-15;
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+window.addEventListener('resize', () => { 
+  confettiCanvas.width = window.innerWidth; 
+  confettiCanvas.height = window.innerHeight; 
+});
+document.querySelectorAll('button,input').forEach(el => 
+  el.addEventListener('focus', () => el.style.outline = '4px solid var(--blue)')
+);
+</script>
+</body>
+</html>
